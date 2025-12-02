@@ -102,9 +102,9 @@ function formatDuration($seconds) {
 
 
 //variables des Artiste
-$nom = htmlspecialchars($artist['name']);
-$bio = nl2br(htmlspecialchars($artist['bio']??''));
-$cover = htmlspecialchars($artist['cover']);
+$nom = $artist['name'];
+$bio = nl2br($artist['bio']??'');
+$cover = $artist['cover'];
 $listeners = formatListeners($artist['monthly_listeners']);
 
 
@@ -114,12 +114,12 @@ if (empty($ChansonsTop5)) {
     $htmlSongs .= '<p class="texte-muted">Aucune Chanson</p>';
 } else {
     foreach ($ChansonsTop5 as $music) {
-        $musicId = htmlspecialchars($music['song_id']);
-        $musicName = htmlspecialchars($music['song_name']);
-        $musicDuration = formatDuration($music['song_duration']);
-        $musicNote = htmlspecialchars($music['song_note']);
-        $albumCover = htmlspecialchars($music['album_cover']);
-        $albumName = htmlspecialchars($music['album_name']);
+        $musicId = $music['song_id'];
+        $musicName = $music['song_name'];
+        $musicDuration = $music['song_duration'];
+        $musicNote = $music['song_note'];
+        $albumCover = $music['album_cover'];
+        $albumName = $music['album_name'];
 
         $htmlSongs .= <<<HTML
         <div class=" text-white border-secondary d-flex align-items-center px-3 py-2">
