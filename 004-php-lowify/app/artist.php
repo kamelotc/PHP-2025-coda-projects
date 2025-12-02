@@ -15,7 +15,7 @@ try {
     exit;
 }
 
-//Quel artiste afficher
+//Verfification Id
 if (empty($_GET['id'])) {
     header("Location: error.php?message=Aucun-artiste-spécifié");
     exit;
@@ -36,7 +36,7 @@ if (empty($artistDetail)) {
 }
 $artist = $artistDetail[0];
 
-//recuper le top 5 chansons
+//recupaire le top 5 chansons
 try {
     $ChansonsTop5 = $db->executeQuery(<<<SQL
         SELECT
@@ -82,17 +82,16 @@ function formatListeners($n) {
         $s = number_format($v, 1, '.', '');
         return (substr($s, -2) === '.0') ? (string)(int)$v . 'B' : $s . 'B';
     }
-
     if ($n >= 1000000) {
         $v = $n / 1000000;
         $s = number_format($v, 1, '.', '');
         return (substr($s, -2) === '.0') ? (string)(int)$v . 'M' : $s . 'M';
     }
-
     $v = $n >= 1000 ? $n / 1000 : $n;
     $s = $n >= 1000 ? number_format($v, 1, '.', '') : (string)(int)$v;
     return (substr($s, -2) === '.0') ? (string)(int)$v . ($n >= 1000 ? 'k' : '') : $s . ($n >= 1000 ? 'k' : '');
 }
+
 //fonction pour le temps des sons
 function formatDuration($seconds) {
     $min = floor($seconds / 60);
@@ -116,7 +115,7 @@ if (empty($ChansonsTop5)) {
     foreach ($ChansonsTop5 as $music) {
         $musicId = $music['song_id'];
         $musicName = $music['song_name'];
-        $musicDuration = $music['song_duration'];
+        $musicDuration = formatDuration($music['song_duration']);
         $musicNote = $music['song_note'];
         $albumCover = $music['album_cover'];
         $albumName = $music['album_name'];
@@ -143,9 +142,9 @@ if (empty($AlbumsDetail)) {
 } else {
     foreach ($AlbumsDetail as $album) {
         $albumId = $album['id'];
-        $albumName = htmlspecialchars($album['name']);
+        $albumName = $album['name'];
         $albumDate = date('Y', strtotime($album['release_date']));
-        $albumCover = htmlspecialchars($album['cover']);
+        $albumCover = $album['cover'];
 
 
         $htmlAlbums .= <<<HTML
