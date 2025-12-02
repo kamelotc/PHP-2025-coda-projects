@@ -1,10 +1,9 @@
 <?php
-
 require_once 'inc/page.inc.php';
 require_once 'inc/database.inc.php';
 
 
-
+//initialisation de la BDD
 try {
     $db = new DatabaseManager(
         dsn: 'mysql:host=mysql;dbname=lowify;charset=utf8mb4',
@@ -17,21 +16,21 @@ try {
 }
 
 
-$ArtistsTotal = [];
-
-
+//recuperer tous les artistes
 try {
 
-    $ArtistsTotal = $db->executeQuery("SELECT id, name, cover FROM artist");
+    $ArtistsTotal = $db->executeQuery(<<<SQL
+        SELECT id, name, cover FROM artist
+    SQL
+    );
+
 } catch (PDOException $ex) {
     echo "Erreur requête base de données : " . $ex->getMessage();
     exit;
 }
 
-
-$HtmlArtists = "";
-$iterator = 0;
-
+//HTML
+$HtmlArtists = '<div class="row">';
 
 foreach ($ArtistsTotal as $artist) {
 
@@ -39,87 +38,40 @@ foreach ($ArtistsTotal as $artist) {
     $artistId = $artist['id'];
     $artistCover = $artist['cover'];
 
-
-    if ($iterator % 4 == 0) {
-        $HtmlArtists .= '<div class="row mb-4">';
-    }
-
-
     $HtmlArtists .= <<<HTML
             <div class="col-lg-3 col-md-6 mb-4">
                 <a href="artist.php?id=$artistId" class="text-decoration-none text-white">
-                    <div class="card h-100 bg-dark text-white border-dark shadow">
+                    <div class="container py-4">
                         <img src="$artistCover" class="card-img-top rounded-circle" alt="Image 1">
-                        <div class="card-body bg-secondary-subtle  text-white">
+                        <div class="card-body text-white text-center">
                             <h5 class="card-title">$artistName</h5>
                         </div>
                     </div>
                 </a>
             </div>
 HTML;
-
-
-    if ($iterator % 4 == 3) {
-        $HtmlArtists .= '</div>';
-    }
-
-    $iterator++;
 }
 
+$HtmlArtists .= '</div>';
 
+//HTLM final
 $html = <<<HTML
-<div class="container bg-dark text-white p-4">
-        <a href="index.php" class="link text-white" >Retour à l'accueil</a>
+<div class="container py-4">
+        <a href="index.php" class="btn btn-outline-light mb-4">← Retour</a>
 
     <h1 class="mb-4">Artistes</h1>
     
-    <div>
-    {$HtmlArtists}
-    </div>
+    $HtmlArtists
+    
 </div>
 HTML;
 
-echo (new HTMLPage(title: "Artistes - Lowify"))
+//affichage HTML
+echo (new HTMLPage(title: "Artiste - Lowify"))
     ->setupBootstrap([
-        "class" => "bg-dark text-white p-4",
-        "data-bs-theme " => "dark"
+        "class" => "bg-black text-white",
+        "data-bs-theme" => "dark"
     ])
     ->setupNavigationTransition()
     ->addContent($html)
     ->render();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*$html = <<<HTML
-    <div class="container mt-5">
-        <h1>Lowify - Artistes</h1>
-            <thead>
-                <tr>
-                    <th>Étape</th>
-                    <th>Résultat</th>
-                </tr>
-            </thead>
-            <body>
-               
-            </body>
-        </table>
-    </div>
-HTML;
-*/
